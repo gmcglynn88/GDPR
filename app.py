@@ -7,8 +7,8 @@ app = Flask(__name__)
 @app.route('/get-token', methods=['POST'])
 def get_token():
     # Hardcoded Client ID and Client Secret for testing purposes
-    client_id = "80d7c7c9-600e-478e-8d41-1bfb7b8c6bc1"
-    client_secret = "BQQBxTIiCO-mY1RFm9TL0NcmhtRewKlqozD0GUdiMdE"
+    client_id = ""
+    client_secret = ""
 
     # Genesys Cloud OAuth token URL (change region as needed)
     token_url = 'https://login.mypurecloud.ie/oauth/token'
