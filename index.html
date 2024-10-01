@@ -13,11 +13,11 @@
       padding: 20px;
     }
     #logo-container {
-      text-align: center; /* Center the logo container */
+      text-align: center;
       margin-bottom: 20px;
     }
     #logo {
-      width: 300px; /* Logo width */
+      width: 300px;
     }
     label {
       margin-top: 10px;
@@ -29,69 +29,145 @@
       padding: 8px;
       width: 100%;
       max-width: 300px;
-    }
-    #statusMessage {
-      margin-top: 20px;
-      color: green;
+      font-size: 1rem;
     }
     button {
       background-color: #4CAF50;
       color: white;
       border: none;
       cursor: pointer;
+      width: 100%;
+      max-width: 300px;
     }
     button:hover {
       background-color: #45a049;
     }
+    #statusMessage {
+      margin-top: 20px;
+      color: green;
+    }
   </style>
 </head>
 <body>
-  <!-- Centered Logo at the top -->
-  <div id="logo-container">
-    <img id="logo" src="https://github.com/gmcglynn88/GDPR/blob/4883152b4214d499b0c2680616a6c87aeb0e0982/Consultinglogo%20(1).png?raw=true" alt="Company Logo">
-  </div>
 
-  <h1>GDPR Data Utility</h1>
+<!-- Centered Logo at the top -->
+<div id="logo-container">
+  <img id="logo" src="https://github.com/gmcglynn88/GDPR/blob/4883152b4214d499b0c2680616a6c87aeb0e0982/Consultinglogo%20(1).png?raw=true" alt="Company Logo">
+</div>
 
-  <!-- Search Type Selection -->
-  <label for="search_type">Select Search Type:</label>
-  <select id="search_type">
-    <option value="name">Name</option>
-    <option value="address">Address</option>
-    <option value="phone">Phone</option>
-    <option value="email">Email</option>
-    <option value="twitter">Twitter</option>
-  </select>
+<h1>GDPR Data Utility</h1>
 
-  <!-- Search Value Input -->
-  <label for="search_value">Search Value:</label>
-  <input type="text" id="search_value" placeholder="Enter the search value" required>
+<!-- Form for Client ID and Client Secret -->
+<label for="client_id">Client ID:</label>
+<input type="text" id="client_id" placeholder="Enter your Client ID">
 
-  <!-- GDPR Request Type -->
-  <label for="request_type">GDPR Request Type:</label>
-  <select id="request_type">
-    <option value="GDPR_EXPORT">GDPR Export</option>
-    <option value="GDPR_UPDATE">GDPR Update</option>
-    <option value="GDPR_DELETE">GDPR Delete</option>
-  </select>
+<label for="client_secret">Client Secret:</label>
+<input type="password" id="client_secret" placeholder="Enter your Client Secret">
 
-  <!-- Button to Submit the GDPR Request -->
-  <button id="create_request">Submit GDPR Request</button>
+<button id="getTokenBtn">Get Access Token</button>
 
-  <!-- Status Message -->
-  <div id="statusMessage"></div>
+<!-- Form Inputs for GDPR Request -->
+<label for="search_type">Select Search Type:</label>
+<select id="search_type">
+  <option value="name">Name</option>
+  <option value="address">Address</option>
+  <option value="phone">Phone</option>
+  <option value="email">Email</option>
+  <option value="twitter">Twitter</option>
+</select>
 
-  <script>
-    // Simple JS to handle form submission and display a status message
-    document.getElementById('create_request').addEventListener('click', function() {
-      const searchType = document.getElementById('search_type').value;
-      const searchValue = document.getElementById('search_value').value;
-      const requestType = document.getElementById('request_type').value;
+<label for="search_value">Search Value:</label>
+<input type="text" id="search_value" placeholder="Enter the search value" required>
 
-      // Simulate interaction
-      document.getElementById('statusMessage').innerText = `GDPR ${requestType} request for ${searchType}: ${searchValue} submitted successfully!`;
+<label for="request_type">GDPR Request Type:</label>
+<select id="request_type">
+  <option value="GDPR_EXPORT">GDPR Export</option>
+  <option value="GDPR_UPDATE">GDPR Update</option>
+  <option value="GDPR_DELETE">GDPR Delete</option>
+</select>
+
+<button id="submitBtn">Submit GDPR Request</button>
+
+<!-- Status Message -->
+<div id="statusMessage"></div>
+
+<script>
+  let accessToken = null;
+
+  // Get the access token when the user clicks the button
+  document.getElementById('getTokenBtn').addEventListener('click', function() {
+    const clientId = document.getElementById('client_id').value;
+    const clientSecret = document.getElementById('client_secret').value;
+
+    // Request to Flask backend to get the access token
+    fetch('/get-token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        client_id: clientId,
+        client_secret: clientSecret
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.access_token) {
+        accessToken = data.access_token; // Store the access token
+        document.getElementById('statusMessage').innerText = 'Access token received!';
+      } else {
+        document.getElementById('statusMessage').innerText = 'Error fetching token.';
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('statusMessage').innerText = 'Error fetching token.';
     });
-  </script>
+  });
+
+  // Submit GDPR request using the access token
+  document.getElementById('submitBtn').addEventListener('click', function() {
+    if (!accessToken) {
+      document.getElementById('statusMessage').innerText = 'Please get the access token first.';
+      return;
+    }
+
+    const searchType = document.getElementById('search_type').value;
+    const searchValue = document.getElementById('search_value').value;
+    const requestType = document.getElementById('request_type').value;
+
+    const apiUrl = 'https://api.mypurecloud.ie/api/v2/gdpr/requests'; // API URL
+
+    const requestBody = {
+      requestType: requestType, // e.g., GDPR_EXPORT
+      subject: {
+        [searchType]: searchValue // Dynamically insert search type and value
+      }
+    };
+
+    // Make the API call using fetch
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`, // Use the token received earlier
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody) // Convert the request body to JSON
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById('statusMessage').innerText = 'GDPR request submitted successfully!';
+      } else {
+        document.getElementById('statusMessage').innerText = `Error: ${data.message}`;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('statusMessage').innerText = `Error: ${error.message}`;
+    });
+  });
+</script>
 
 </body>
 </html>
