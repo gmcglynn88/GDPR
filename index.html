@@ -4,17 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GDPR Data Utility</title>
+  <!-- Include the Proxima Nova font -->
+  <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Proxima Nova', Arial, sans-serif;
       margin: 20px;
+      padding: 20px;
     }
-    label, select, input, button {
+    #logo-container {
+      text-align: center; /* Center the logo container */
+      margin-bottom: 20px;
+    }
+    #logo {
+      width: 300px; /* Logo width */
+    }
+    label {
+      margin-top: 10px;
       display: block;
-      margin: 10px 0;
+      font-weight: bold;
+    }
+    select, input, button {
+      margin-top: 5px;
+      padding: 8px;
+      width: 100%;
+      max-width: 300px;
+    }
+    #statusMessage {
+      margin-top: 20px;
+      color: green;
     }
     button {
-      padding: 10px;
       background-color: #4CAF50;
       color: white;
       border: none;
@@ -23,78 +43,55 @@
     button:hover {
       background-color: #45a049;
     }
-    #statusMessage {
-      margin-top: 20px;
-      color: green;
-    }
   </style>
 </head>
 <body>
+  <!-- Centered Logo at the top -->
+  <div id="logo-container">
+    <img id="logo" src="https://github.com/gmcglynn88/GDPR/blob/4883152b4214d499b0c2680616a6c87aeb0e0982/Consultinglogo%20(1).png?raw=true" alt="Company Logo">
+  </div>
 
-<h1>GDPR Data Utility</h1>
+  <h1>GDPR Data Utility</h1>
 
-<!-- Form Inputs -->
-<label for="search_type">Select Search Type:</label>
-<select id="search_type">
-  <option value="name">Name</option>
-  <option value="address">Address</option>
-  <option value="phone">Phone</option>
-  <option value="email">Email</option>
-  <option value="twitter">Twitter</option>
-</select>
+  <!-- Search Type Selection -->
+  <label for="search_type">Select Search Type:</label>
+  <select id="search_type">
+    <option value="name">Name</option>
+    <option value="address">Address</option>
+    <option value="phone">Phone</option>
+    <option value="email">Email</option>
+    <option value="twitter">Twitter</option>
+  </select>
 
-<label for="search_value">Search Value:</label>
-<input type="text" id="search_value" placeholder="Enter the search value" required>
+  <!-- Search Value Input -->
+  <label for="search_value">Search Value:</label>
+  <input type="text" id="search_value" placeholder="Enter the search value" required>
 
-<label for="request_type">GDPR Request Type:</label>
-<select id="request_type">
-  <option value="GDPR_EXPORT">GDPR Export</option>
-  <option value="GDPR_UPDATE">GDPR Update</option>
-  <option value="GDPR_DELETE">GDPR Delete</option>
-</select>
+  <!-- GDPR Request Type -->
+  <label for="request_type">GDPR Request Type:</label>
+  <select id="request_type">
+    <option value="GDPR_EXPORT">GDPR Export</option>
+    <option value="GDPR_UPDATE">GDPR Update</option>
+    <option value="GDPR_DELETE">GDPR Delete</option>
+  </select>
 
-<button id="submitBtn">Submit GDPR Request</button>
+  <!-- Button to Submit the GDPR Request -->
+  <button id="create_request">Submit GDPR Request</button>
 
-<!-- Status Message -->
-<div id="statusMessage"></div>
+  <!-- Status Message -->
+  <div id="statusMessage"></div>
 
-<script>
-  document.getElementById('submitBtn').addEventListener('click', function() {
-    const searchType = document.getElementById('search_type').value;
-    const searchValue = document.getElementById('search_value').value;
-    const requestType = document.getElementById('request_type').value;
+  <script>
+    // Simple JS to handle form submission and display a status message
+    document.getElementById('create_request').addEventListener('click', function() {
+      const searchType = document.getElementById('search_type').value;
+      const searchValue = document.getElementById('search_value').value;
+      const requestType = document.getElementById('request_type').value;
 
-    // API URL (replace with actual API URL you're calling)
-    const apiUrl = `https://api.mypurecloud.ie/api/v2/gdpr`; // Replace with your actual API URL
-
-    // Make the API request
-    fetch(apiUrl, {
-      method: 'POST', // Use the appropriate HTTP method (POST/GET/DELETE)
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer YOUR_ACCESS_TOKEN' // Replace with actual API access token if needed
-      },
-      body: JSON.stringify({
-        requestType: requestType, // e.g., "GDPR_EXPORT"
-        subject: {
-          [searchType]: searchValue // Dynamically insert the search type and value
-        }
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        document.getElementById('statusMessage').innerText = 'GDPR request successfully submitted!';
-      } else {
-        document.getElementById('statusMessage').innerText = `Error: ${data.message}`;
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      document.getElementById('statusMessage').innerText = `Error: ${error.message}`;
+      // Simulate interaction
+      document.getElementById('statusMessage').innerText = `GDPR ${requestType} request for ${searchType}: ${searchValue} submitted successfully!`;
     });
-  });
-</script>
+  </script>
 
 </body>
 </html>
