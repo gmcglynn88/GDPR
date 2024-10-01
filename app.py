@@ -16,8 +16,8 @@ def get_token():
     # Request payload for Client Credentials flow
     data = {
         'grant_type': 'client_credentials',
-        'client_id': client_id,
-        'client_secret': client_secret
+        'client_id': "80d7c7c9-600e-478e-8d41-1bfb7b8c6bc1",
+        'client_secret': "BQQBxTIiCO-mY1RFm9TL0NcmhtRewKlqozD0GUdiMdE"
     }
 
     # Make request to Genesys Cloud to get the access token
