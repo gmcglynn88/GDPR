@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDPR Data Utility</title>
+</head>
+<body>
+
+<div class="container">
+    <h1>GDPR Data Request Utility</h1>
+    <form id="gdpr-form">
+        <label for="search_type">Search Type:</label>
+        <select name="search_type" id="search_type">
+            <option value="name">Name</option>
+            <option value="email">Email</option>
+            <option value="phone">Phone</option>
+        </select>
+
+        <label for="search_value">Search Value:</label>
+        <input type="text" id="search_value" name="search_value" />
+
+        <label for="request_type">Request Type:</label>
+        <select name="request_type" id="request_type">
+            <option value="GDPR_EXPORT">GDPR Export</option>
+            <option value="GDPR_DELETE">GDPR Delete</option>
+            <option value="GDPR_UPDATE">GDPR Update</option>
+        </select>
+
+        <button type="submit">Submit GDPR Request</button>
+    </form>
+
+    <div id="response"></div>
+</div>
+
+<script>
+    document.getElementById('gdpr-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        document.getElementById('response').innerHTML = 'Form Submitted';
+    });
+</script>
+
+</body>
+</html>
